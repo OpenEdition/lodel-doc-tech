@@ -1,16 +1,43 @@
-# Installation à partir du dépot Github 
+# Installation de LODEL préinstallé sur une VM  
 
+Pour tester le logiciel, il est recommandé d'installer la version pré-installée disponible à l'adresse suivante : [http://lodel.org/downloads/vms/2017](http://lodel.org/downloads/vms/2017) et suivez les instructions du readme.
+(La version 2017 doit être mise à jour -> utilisez pour l'instant [version 2016](http://lodel.org/downloads/vms/2017), plus stable).
 
+Notamment, la version préinstallée comprend également [OTX, le logiciel de conversion de fichiers .doc ou .odt files vers le format XML-TEI](https://github.com/OpenEdition/otx) ; OTX est integré à Lodel 1.0. Sans OTX, pour importer un document tel qu'un article sur un site, vous devez le charger au format XML-TEI; OTX permet de charger directement des documents bureautiques au format DOC.
+
+Il est cependant bien sûr possible de faire l'installation soi-même (à partir d'un OS Linux ou d'une VM vierge),
+voici les étapes à suivre (sans l'installation d'OTX):  
+
+# Installation sur une VM (VirtualBox)   
+
+## Principes d'une installation  
+- Cloner de préférence la dernière version tagguée.
+- Faire pointer le virtual host sur la racine de l'installation Lodel.
+- L'utilisateur du serveur HTTP doit avoir les droits de lecture sur tous les fichiers.
+- Créer une base de donnée et un utilisateur ayant les droits de modification sur cette base.
+- Aller à l'adresse configurée avec un navigateur web, suivre les instructions dans l'IHM. Il faudra donner temporairement les droits d'écriture sur le dossier d'une instance de site.
+- Vérifer qu'à l'intérieur du dossier d'un site l'utilisateur du serveur HTTP (ex. www-data) a bien les droits d'écriture sur les dossiers: upload, docannexe, docannexe/file, docannexe/image, lodel/sources, lodel/icons
+
+## Détail des étapes  
+A partir d'une machine virtuelle VirtualBox.
+Si vous partez d'une image Debian9 vierge, installer sudo (https://blog.seboss666.info/2014/05/installer-et-utiliser-sudo-sur-debian/) :
+`su root` puis `apt-get update` et `apt-get install sudo`   
+Ajoutez vous comme sudoer : ajoutez un fichier (`sudo nano /etc/sudoers.d/votreuser`) contenant 1 ligne:
+ `$USER ALL = ALL`
+puis rebootez.  
+
+Si besoin, augmenter la taille disque: VBoxmanage modifyhd cheminVM/dd.vdi --resize tailleenMo
 
 ### installation des PAQUETS :   
 
 `sudo apt-get update`  
 `sudo apt-get dist-upgrade`  
+
 `sudo apt install mysql-server`  
 `sudo apt install mysql-client`  
 `sudo apt-get install php php-fpm`  (installe php7 sur debian9)  
 Pour éviter que apache et nginx n'interfèrent, supprimez apache2 (installé par défaut sur Debian)
-`sudo apt-get remove apache2`  (ou `sudo apt-get purge apache2`)    
+`sudo apt-get remove apache2`  (ou`sudo apt-get purge apache2`)    
 `sudo apt-get install nginx`  
 `sudo apt-get install git`  
 
@@ -74,8 +101,8 @@ Suivre les instructions de https://github.com/OpenEdition/lodel/blob/master/INST
 
 Ensuite:
 <pre><code>cp lodelconfig-default.php lodelconfig.php
-sudo grep install_key lodelconfig.php
-sudo ouch 03dde1bd-c6b6-4424-8618-c4488e30484a
+grep install_key lodelconfig.php
+touch 03dde1bd-c6b6-4424-8618-c4488e30484a
 `#passer root (su root)`
 mysql -u root -p
 `#(pass :votremdp)`
@@ -90,8 +117,6 @@ Connectez-vous à `127.0.0.1/lodeladmin/install.php` (qui vérifie si toutes les
 puis si tout est Ok, suivez les instructions qui vous invitent à vous connectez en tant que Username: admin / Password: xxxxxxxxxxxxxx,
 puis à créer un autre utilisateur avec les droits LodelAdmin, puis à créer un site.
 Supprimez ensuite le fichier 03dde1bd-c6b6-4424-8618-c4488e30484a (et aussi l'utilisateur admin initial).  
-
-<pre><code>/var/www/html/lodel/lodel/scripts$ sudo composer install
 
 ### Tester l'installation  
 
